@@ -18,7 +18,7 @@
     <el-container>
       <el-aside class="aside" width="200px">
         <!-- 导航 -->
-        <!-- unique-opened 是否是保持一个子菜单的展开 -->
+       退出 -->
         <el-menu default-active="1" :router="true" :unique-opened="true">
           <!-- 用户管理 -->
           <el-submenu index="1">
