@@ -47,15 +47,29 @@
                 </el-table-column>
             </el-table>
             <!-- 分页 -->
-            <el-pagination
-             @size-change="handleSizeChange"
-              @current-change="handleCurrentChange" 
-              :current-page="pagenum" 
-              :page-sizes="[2, 4, 6, 8]" 
-              :page-size="2" 
-              layout="total, sizes, prev, pager, next, jumper" 
-              :total="total">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagenum" :page-sizes="[2, 4, 6, 8]" :page-size="2" layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
+
+            <el-dialog title="收货地址" :visible.sync="dialogFormVisibleAdd">
+                <el-form label-position="left" label-width="80px" :model="formdata">
+                    <el-form-item label="用户名">
+                        <el-input v-model="formdata.username"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码">
+                        <el-input v-model="formdata.password"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱">
+                        <el-input v-model="formdata.email"></el-input>
+                    </el-form-item>
+                    <el-form-item label="电话">
+                        <el-input v-model="formdata.mobile"></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogFormVisibleAdd = false">确 定</el-button>
+                </div>
+            </el-dialog>
         </el-card>
     </div>
 </template>
@@ -66,26 +80,51 @@ export default {
       query: "",
       pagenum: 1,
       pagesize: 2,
-      total:-1,
-      list: []
+      total: -1,
+      list: [],
+      dialogFormVisibleAdd: false,
+      // 表单数据
+      formdata: {
+        // username	用户名称	不能为空
+        // password	用户密码	不能为空
+        // email	邮箱	可以为空
+        // mobile	手机号	可以为空
+        username: "",
+        password: "",
+        email: "",
+        mobile: ""
+      }
     };
   },
   created() {
     this.getTableDate();
   },
   methods: {
+    //   添加用户-显示对话框
+    showDiaAddUser() {
+        this.dialogFormVisibleAdd = true
+    },
+    //   清空时获取所有用户
+    getAllUsers() {
+      this.getTableDate();
+    },
+    //   搜索用户
+    searchUser() {
+      this.pagenum = 1;
+      this.getTableDate();
+    },
     //   分页相关的方法
-     handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
-        this.pagenum = 1
-        this.pagesize = val
-        this.getTableDate()
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
-        this.pagenum = val
-        this.getTableDate()
-      },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pagenum = 1;
+      this.pagesize = val;
+      this.getTableDate();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.pagenum = val;
+      this.getTableDate();
+    },
     async getTableDate() {
       const AUTH_TOKEN = localStorage.getItem("token");
       console.log(AUTH_TOKEN);
@@ -102,8 +141,8 @@ export default {
       console.log(res);
       const { data, meta: { status, msg } } = res.data;
       if (status === 200) {
-        this.total = data.total
-        this.list = data.users
+        this.total = data.total;
+        this.list = data.users;
         // console.log(this.list);
       }
     }
