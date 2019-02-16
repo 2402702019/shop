@@ -15,38 +15,50 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       formdata: {
-        username: "",
-        password: ""
+        username: '',
+        password: ''
       }
-    };
+    }
   },
   methods: {
-   handlelogin() {
-      this.$http
-        .post(`login`, this.formdata)
-        .then(res => {
-          console.log(res);
-          const {
-            data: {
-              data,
-              meta: { msg, status }
-            }
-          } = res;
-          if (status === 200) {
-            console.log("login---success----");
-          } else {
-            console.log("error----");
-          }
+    async handlelogin () {
+      const res = await this.$http.post(`login`, this.formdata)
+      console.log(res)
+      const {
+        data: {
+          data: {token},
+          meta: { msg, status }
+        }
+      } = res
+      if (status === 200) {
+        localStorage.setItem('token', token)
+        this.$router.push({
+          name: 'home'
         })
-        .catch(err => {
-          console.log(err);
-        });
+      } else {
+        this.$message.error(msg)
+      }
+      // .then(res => {
+      //   console.log(res);
+      //   const { data: { data, meta: { msg, status } } } = res;
+      //   console.log(msg);
+      //   if (status === 200) {
+      //     this.$router.push({
+      //       name: "home"
+      //     });
+      //   } else {
+      //     this.$message.error(msg);
+      //   }
+      // })
+      // .catch(err => {
+      //   console.log(err);
+      // });
     }
   }
-};
+}
 </script>
 <style>
 .login-wrap {
