@@ -155,15 +155,15 @@ export default {
       const res = await this.$http.put(`users/${this.currUserId}/role`, {
         // rid角色id
         rid: this.selectVal
-      });
+      })
       // console.log(res);
       const {
         meta: { msg, status }
-      } = res.data;
+      } = res.data
       if (status === 200) {
         // 关闭对话框
-        this.dialogFormVisibleRole = false;
-        this.$message.success(msg);
+        this.dialogFormVisibleRole = false
+        this.$message.success(msg)
       }
     },
     // 分配角色-显示对话框
