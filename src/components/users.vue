@@ -100,7 +100,7 @@
                         {{selectVal}}
                         <el-select v-model="selectVal" placeholder="请选择角色名称">
                             <el-option label="请选择" :value="-1"></el-option>
-                            <el-option :label="item.roleName" :value="item.id" v-for="(item, i) in roles" :key="item.id"></el-option>
+                            <el-option :label="item.roleName" :value="item.id" v-for="(item) in roles" :key="item.id"></el-option>
 
                         </el-select>
                     </el-form-item>
