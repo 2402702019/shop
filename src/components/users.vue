@@ -294,7 +294,7 @@ export default {
     },
     async getTableDate() {
       const AUTH_TOKEN = localStorage.getItem("token");
-      console.log(AUTH_TOKEN);
+      // console.log(AUTH_TOKEN);
 
       this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
       // query	查询参数	可以为空
