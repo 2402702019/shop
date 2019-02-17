@@ -40,7 +40,7 @@
                 </el-table-column>
                 <el-table-column label="操作" width="200">
                     <template slot-scope="scope">
-                        <el-button type="primary" icon="el-icon-edit" circle size="mini" plain></el-button>
+                        <el-button @click="showEditUser(scope.row)" type="primary" icon="el-icon-edit" circle size="mini" plain></el-button>
                         <el-button @click="showMsgBox(scope.row)" type="danger" icon="el-icon-delete" circle size="mini" plain></el-button>
                         <el-button type="success" icon="el-icon-check" circle size="mini" plain></el-button>
                     </template>
@@ -49,8 +49,8 @@
             <!-- 分页 -->
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagenum" :page-sizes="[2, 4, 6, 8]" :page-size="2" layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
-
-            <el-dialog title="收货地址" :visible.sync="dialogFormVisibleAdd">
+            <!-- 对话框 - 添加用户对话框 -->
+            <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
                 <el-form label-position="left" label-width="80px" :model="formdata">
                     <el-form-item label="用户名">
                         <el-input v-model="formdata.username"></el-input>
@@ -70,6 +70,26 @@
                     <el-button type="primary" @click="addUser()">确 定</el-button>
                 </div>
             </el-dialog>
+
+            <!-- 对话框 - 编辑 -->
+            <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
+                <el-form label-position="left" label-width="80px" :model="formdata">
+                    <el-form-item label="用户名">
+                        <el-input disabled v-model="formdata.username"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="邮箱">
+                        <el-input v-model="formdata.email"></el-input>
+                    </el-form-item>
+                    <el-form-item label="电话">
+                        <el-input v-model="formdata.mobile"></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+                    <el-button type="primary" @click="editUser()">确 定</el-button>
+                </div>
+            </el-dialog>
         </el-card>
     </div>
 </template>
@@ -83,6 +103,8 @@ export default {
       total: -1,
       list: [],
       dialogFormVisibleAdd: false,
+      dialogFormVisibleEdit: false,
+    //   userId:-1,
       // 表单数据
       formdata: {
         // username	用户名称	不能为空
@@ -97,9 +119,33 @@ export default {
     };
   },
   created() {
-    this.getTableDate();
+    this.getTableDate()
   },
   methods: {
+    //   编辑-发送请求
+    async editUser() {
+        const res = await this.$http.put(`users/${this.formdata.id},this.formdata`)
+        console.log(res) 
+        const { meta: { mag, status } } = res.data;
+          if (status === 200) {
+            //   关闭对话框
+               this.dialogFormVisibleEdit = false
+               this.getTableDate()
+          }   
+    },
+    //   编辑-弹显示对话框
+    showEditUser(user) {
+        //user 的数据
+        // create_time: (...)
+        // email: (...)
+        // id: (...)
+        // mg_state: (...)
+        // mobile: (...)
+        // role_name: (...)
+        // username: (...)
+        this.formdata = user
+        this.dialogFormVisibleEdit = true
+    },
     //   删除-弹出确认框
     showMsgBox(user) {
       // console.log(user)
@@ -113,7 +159,7 @@ export default {
           // 发送请求
           const res = await this.$http.delete(`users/${user.id}`);
           console.log(res);
-          const { meta: { mag, status } } = res.data;
+          const { meta: { mag, status } } = res.data
           if (status === 200) {
             // 提示框
             this.$message.success("删除成功!")
@@ -129,26 +175,26 @@ export default {
     //   添加用户-发送请求
     async addUser() {
       // 获取表单数据，发送请求
-      const res = this.$http.post(`users`, this.formdata)
+      const res = this.$http.post(`users`, this.formdata);
       console.log(res);
       // 关闭对话框
-      this.dialogFormVisibleAdd = false
+      this.dialogFormVisibleAdd = false;
       // 更新表格
       this.getTableDate();
     },
     //   添加用户-显示对话框
     showDiaAddUser() {
-      this.formdata = {}
-      this.dialogFormVisibleAdd = true
+      this.formdata = {};
+      this.dialogFormVisibleAdd = true;
     },
     //   清空时获取所有用户
     getAllUsers() {
-      this.getTableDate()
+      this.getTableDate();
     },
     //   搜索用户
     searchUser() {
-      this.pagenum = 1
-      this.getTableDate()
+      this.pagenum = 1;
+      this.getTableDate();
     },
     //   分页相关的方法
     handleSizeChange(val) {
