@@ -107,7 +107,7 @@
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
-                    <el-button type="primary" @click="dialogFormVisibleRole = false">确 定</el-button>
+                    <el-button type="primary" @click="setRole()">确 定</el-button>
                 </div>
             </el-dialog>
         </el-card>
@@ -140,25 +140,55 @@ export default {
       // 下拉框使用的数据
       selectVal: -1,
       // 保存角色的数据
-      roles: []
+      roles: [],
+      currUsername:"",
+      currUserId:-1
     };
   },
   created() {
     this.getTableDate();
   },
   methods: {
+    // 分配角色 - 发送请求
+    async setRole() {
+      // 发送请求
+      const res = await this.$http.put(`users/${this.currUserId}/role`, {
+        // rid角色id
+        rid: this.selectVal
+      });
+      // console.log(res);
+      const {
+        meta: { msg, status }
+      } = res.data;
+      if (status === 200) {
+        // 关闭对话框
+        this.dialogFormVisibleRole = false;
+        this.$message.success(msg);
+      }
+    },
     // 分配角色-显示对话框
     async showDiaSetRole(user) {
-      this.formdata = user
-      this.dialogFormVisibleRole = true
+      // console.log(user)
+
+    //   this.formdata = user;
+    this.currUserId = user.id
+    this.currUsername = user.username
+      this.dialogFormVisibleRole = true;
       // 获取所有角色名称(5个)
-      const res = await this.$http.get(`roles`)
-      console.log(res);
-      const { data, meta: { status, msg } } = res.data
+      const res = await this.$http.get(`roles`);
+      //   console.log(res);
+      const { data, meta: { status, msg } } = res.data;
       if (status === 200) {
-        this.roles = data
-        console.log(this.roles)
+        this.roles = data;
+        console.log(this.roles);
       }
+      //   获取当前用户的角色id
+      const res2 = await this.$http.get(`users/${user.id}`);
+      console.log(res2);
+      //   const { meta: { msg2, status2 }, data2 } = res2.data
+      //   if (status2 === 200) {
+      this.selectVal = res2.data.data.rid;
+      //   }
     },
     //   修改用户状态
     async changeState(user) {
