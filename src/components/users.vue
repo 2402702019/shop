@@ -97,8 +97,11 @@
                         {{formdata.username}}
                     </el-form-item>
                     <el-form-item label="角色">
+                        {{selectVal}}
                         <el-select v-model="selectVal" placeholder="请选择角色名称">
-                            <el-option label="请选择" value="shanghai"></el-option>
+                            <el-option label="请选择" :value="-1"></el-option>
+                            <el-option :label="item.roleName" :value="item.id" v-for="(item, i) in roles" :key="item.id"></el-option>
+
                         </el-select>
                     </el-form-item>
                 </el-form>
@@ -135,16 +138,27 @@ export default {
         mobile: ""
       },
       // 下拉框使用的数据
-        selectVal:1
-    }
+      selectVal: -1,
+      // 保存角色的数据
+      roles: []
+    };
   },
   created() {
     this.getTableDate();
   },
   methods: {
     // 分配角色-显示对话框
-    showDiaSetRole() {
-        this.dialogFormVisibleRole = true
+    async showDiaSetRole(user) {
+      this.formdata = user
+      this.dialogFormVisibleRole = true
+      // 获取所有角色名称(5个)
+      const res = await this.$http.get(`roles`)
+      console.log(res);
+      const { data, meta: { status, msg } } = res.data
+      if (status === 200) {
+        this.roles = data
+        console.log(this.roles)
+      }
     },
     //   修改用户状态
     async changeState(user) {
