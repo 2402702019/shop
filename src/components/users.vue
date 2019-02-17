@@ -41,7 +41,7 @@
                 <el-table-column label="操作" width="200">
                     <template slot-scope="scope">
                         <el-button type="primary" icon="el-icon-edit" circle size="mini" plain></el-button>
-                        <el-button type="danger" icon="el-icon-delete" circle size="mini" plain></el-button>
+                        <el-button @click="showMsgBox(scope.row)" type="danger" icon="el-icon-delete" circle size="mini" plain></el-button>
                         <el-button type="success" icon="el-icon-check" circle size="mini" plain></el-button>
                     </template>
                 </el-table-column>
@@ -67,7 +67,7 @@
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
-                    <el-button type="primary" @click="dialogFormVisibleAdd = false">确 定</el-button>
+                    <el-button type="primary" @click="addUser()">确 定</el-button>
                 </div>
             </el-dialog>
         </el-card>
@@ -100,18 +100,55 @@ export default {
     this.getTableDate();
   },
   methods: {
+    //   删除-弹出确认框
+    showMsgBox(user) {
+      // console.log(user)
+
+      this.$confirm("是否把我删除？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          // 发送请求
+          const res = await this.$http.delete(`users/${user.id}`);
+          console.log(res);
+          const { meta: { mag, status } } = res.data;
+          if (status === 200) {
+            // 提示框
+            this.$message.success("删除成功!")
+            // 更新表格
+            this.pagenum = 1
+            this.getTableDate()
+          }
+        })
+        .catch(() => {
+          this.$message.info("已取消删除")
+        });
+    },
+    //   添加用户-发送请求
+    async addUser() {
+      // 获取表单数据，发送请求
+      const res = this.$http.post(`users`, this.formdata)
+      console.log(res);
+      // 关闭对话框
+      this.dialogFormVisibleAdd = false
+      // 更新表格
+      this.getTableDate();
+    },
     //   添加用户-显示对话框
     showDiaAddUser() {
-        this.dialogFormVisibleAdd = true
+      this.formdata = {}
+      this.dialogFormVisibleAdd = true
     },
     //   清空时获取所有用户
     getAllUsers() {
-      this.getTableDate();
+      this.getTableDate()
     },
     //   搜索用户
     searchUser() {
-      this.pagenum = 1;
-      this.getTableDate();
+      this.pagenum = 1
+      this.getTableDate()
     },
     //   分页相关的方法
     handleSizeChange(val) {
@@ -157,5 +194,3 @@ export default {
   width: 400px;
 }
 </style>
-
-
