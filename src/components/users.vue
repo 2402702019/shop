@@ -229,7 +229,7 @@ export default {
       // username: (...)
       // this.formdata = user
       // this.dialogFormVisibleEdit = true
-      const res = await this.$http.get(`users/${user.id}`)
+      const res = await this.$http.get(`users/${user.id}`);
       this.formdata = res.data.data
     },
     //   删除-弹出确认框
