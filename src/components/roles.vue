@@ -6,6 +6,29 @@
             <el-button class="btn" type="primary">添加角色</el-button>
             <!-- 表格 -->
             <el-table :data="roles" style="width: 100%">
+                <el-table-column type="expand">
+                    <template slot-scope="scope">
+                        <!-- 行列 -->
+                        <!--  el-row>(el-col>el-tag+el-col>el-row>(el-col>el-tag+el-col>el-tag))-->
+                        <el-row class="level1" v-for="(item1,i) in scope.row.children" :key="item1.id">
+                            <el-col :span="4">
+                                <el-tag closable type="danger">{{item1.authName}}</el-tag>
+                                <i class="el-icon-arrow-right"></i>
+                            </el-col>
+                            <el-col :span="20">
+                                <el-row class="level2" v-for="(item2,i) in item1.children" :key="item2.id">
+                                    <el-col :span="4">
+                                        <el-tag closable type="info">{{item2.authName}}</el-tag>
+                                        <i class="el-icon-arrow-right"></i>
+                                    </el-col>
+                                    <el-col :span="20">
+                                        <el-tag closable v-for="(item3,i) in item2.children" :key="item3.id" type="warning">{{item3.authName}}</el-tag>
+                                    </el-col>
+                                </el-row>
+                            </el-col>
+                        </el-row>
+                    </template>
+                </el-table-column>
                 <el-table-column type="index" label="#" width="160">
                 </el-table-column>
                 <el-table-column prop="roleName" label="角色名称" width="200">
@@ -31,26 +54,28 @@ export default {
     };
   },
   created() {
-    this.getRoles()
+    this.getRoles();
   },
   methods: {
-      showDiaSetRights() {
-
-      },
+    showDiaSetRights() {},
     async getRoles() {
-      const res = await this.$http.get(`roles`)
-      this.roles = res.data.data
-      console.log(this.roles)
+      const res = await this.$http.get(`roles`);
+      this.roles = res.data.data;
+      console.log(this.roles);
     }
   }
 };
 </script>
 <style>
 .box {
-  height: 100%
+  height: 100%;
 }
 .btn {
-  margin-top: 20px
+  margin-top: 20px;
+}
+.level1,
+level2 {
+  margin-bottom: 10px;
 }
 </style>
 
