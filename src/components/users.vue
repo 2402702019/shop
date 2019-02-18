@@ -218,7 +218,7 @@ export default {
       }
     },
     //   编辑-弹显示对话框
-    showEditUser (user) {
+    async showEditUser (user) {
       // user 的数据
       // create_time: (...)
       // email: (...)
@@ -227,8 +227,10 @@ export default {
       // mobile: (...)
       // role_name: (...)
       // username: (...)
-      this.formdata = user
-      this.dialogFormVisibleEdit = true
+      // this.formdata = user
+      // this.dialogFormVisibleEdit = true
+      const res = await this.$http.get(`users/${user.id}`)
+      this.formdata = res.data.data
     },
     //   删除-弹出确认框
     showMsgBox (user) {
