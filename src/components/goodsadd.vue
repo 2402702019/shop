@@ -62,19 +62,29 @@ export default {
         pics: [],
         attrs: []
       },
-      option:[],
-      selectedOptions:[],
-      defaultProp:{
-          label:"",
-          value:"",
-          children:""
+      options: [],
+      selectedOptions: [1,3,6],
+      defaultProp: {
+        label: "cat_name",
+        value: "cat_id",
+        children: "children"
       }
     };
   },
+  created() {
+    this.getGoodsCate();
+  },
   methods: {
-      handleChange(){
-
+    //   获取三级分类的数据
+    async getGoodsCate() {
+      const res = await this.$http.get(`categories?type=3`);
+      const { meta: { msg, status }, data } = res.data;
+      if (status === 200) {
+        this.options = data;
+        console.log(this.options);
       }
+    },
+    handleChange() {}
   }
 };
 </script>
@@ -86,8 +96,8 @@ export default {
   margin-top: 20px;
 }
 .form {
-    height: 400px;
-    overflow:auto
+  height: 400px;
+  overflow: auto;
 }
 </style>
 
