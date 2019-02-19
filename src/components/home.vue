@@ -30,7 +30,7 @@
               {{item2.authName}}
             </el-menu-item>
           </el-submenu>
-        </el-menu>    
+        </el-menu>
       </el-aside>
       <el-main class="main">
         <!-- 提供容器 -->
@@ -42,39 +42,39 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       menus: []
-    };
-  },
-  beforeMount() {
-    if (!localStorage.getItem("token")) {
-      this.$router.push({
-        name: "login"
-      });
     }
   },
-  created() {
-    this.getMenus();
+  beforeMount () {
+    if (!localStorage.getItem('token')) {
+      this.$router.push({
+        name: 'login'
+      })
+    }
+  },
+  created () {
+    this.getMenus()
   },
   methods: {
-    async getMenus() {
-      const res = await this.$http.get(`menus`);
-      const { meta: { msg, status }, data } = res.data;
+    async getMenus () {
+      const res = await this.$http.get(`menus`)
+      const { meta: { msg, status }, data } = res.data
       if (status === 200) {
-        this.menus = data;
-        console.log(this.menus);
+        this.menus = data
+        console.log(this.menus)
       }
     },
-    handleLoginout() {
-      localStorage.clear();
+    handleLoginout () {
+      localStorage.clear()
       this.$router.push({
-        name: "login"
-      });
-      this.$message.warning("退出成功");
+        name: 'login'
+      })
+      this.$message.warning('退出成功')
     }
   }
-};
+}
 </script>
 
 <style>

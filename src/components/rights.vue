@@ -16,36 +16,36 @@
                 </template>
             </el-table-column>
         </el-table>
-    </el-card>   
+    </el-card>
 </template>
-    
+
 <script>
 export default {
-  data() {
+  data () {
     return {
       list: []
-    };
+    }
   },
-  created() {
-    this.getTableData();
+  created () {
+    this.getTableData()
   },
   methods: {
-    async getTableData() {
-      const res = await this.$http.get(`rights/list`);
+    async getTableData () {
+      const res = await this.$http.get(`rights/list`)
 
-      console.log(res);
+      console.log(res)
       const {
         meta: { msg, status },
         data
-      } = res.data;
+      } = res.data
       if (status === 200) {
-        console.log("请求发起----");
+        console.log('请求发起----')
 
-        this.list = data;
+        this.list = data
       }
     }
   }
-};
+}
 </script>
 <style>
 .box {

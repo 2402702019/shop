@@ -62,7 +62,7 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     return {
       roles: [],
       dialogFormVisible: false,
@@ -74,60 +74,59 @@ export default {
       arrCheck: [],
       //   配置选项
       defaultProps: {
-        label: "authName",
-        children: "children"
+        label: 'authName',
+        children: 'children'
       },
       //   当前角色id
       currRoleId: -1
-    };
+    }
   },
-  created() {
-    this.getRoles();
+  created () {
+    this.getRoles()
   },
   methods: {
     //   分配权限
-    async setRights() {
-      const arr1 = this.$refs.treeDom.getCheckedKeys();
-    //   console.log(arr1);
+    async setRights () {
+      const arr1 = this.$refs.treeDom.getCheckedKeys()
+      //   console.log(arr1);
 
-      const arr2 = this.$refs.treeDom.getHalfCheckedKeys();
-    //   console.log(arr2);
+      const arr2 = this.$refs.treeDom.getHalfCheckedKeys()
+      //   console.log(arr2);
 
-      const arr = [...arr1, ...arr2];
+      const arr = [...arr1, ...arr2]
       //  发送请求
-      const res = await this.$http.post(`roles/${this.currRoleId}/rights`,{
-          rids:arr.join(',')
-      });
-      console.log(res);
+      const res = await this.$http.post(`roles/${this.currRoleId}/rights`, {
+        rids: arr.join(',')
+      })
+      console.log(res)
       if (res.data.meta.status === 200) {
-
-        this.dialogFormVisible = false 
+        this.dialogFormVisible = false
       }
-      
+
     //   console.log(this.arrCheck);
     },
     //   取消权限
-    async deleRights(role, rights) {
+    async deleRights (role, rights) {
       const res = await this.$http.delete(
         `roles/${role.id}/rights/${rights.id}`
-      );
+      )
       // console.log(res)
-      const { meta: { msg, status }, data } = res.data;
+      const { meta: { msg, status }, data } = res.data
       if (status === 200) {
         // 提示
-        this.$message.success(msg);
+        this.$message.success(msg)
         // 更新
         // this.getRoles();
-        role.children = data;
+        role.children = data
       }
     },
-    async showDiaSetRights(role) {
-      this.currRoleId = role.id;
-      const res = await this.$http.get(`rights/tree`);
+    async showDiaSetRights (role) {
+      this.currRoleId = role.id
+      const res = await this.$http.get(`rights/tree`)
       //   console.log(res);
-      const { meta: { msg, status }, data } = res.data;
+      const { meta: { msg, status }, data } = res.data
       if (status === 200) {
-        this.treedata = data;
+        this.treedata = data
 
         //   取出每一层节点的id->arrExpand
 
@@ -137,32 +136,32 @@ export default {
         // console.log(this.arrCheck);
       }
 
-      const temp = [];
+      const temp = []
       role.children.forEach(item1 => {
         //   temp.push(item1.id);
         item1.children.forEach(item2 => {
           // temp.push(item2.id);
           item2.children.forEach(item3 => {
-            temp.push(item3.id);
-          });
-        });
-      });
-      console.log(temp);
-      this.arrCheck = temp;
+            temp.push(item3.id)
+          })
+        })
+      })
+      console.log(temp)
+      this.arrCheck = temp
 
       // 获取当前角色有的权限
-      const res2 = await this.$http.get(`roles`);
-      console.log(res2.data.data);
+      const res2 = await this.$http.get(`roles`)
+      console.log(res2.data.data)
 
-      this.dialogFormVisible = true;
+      this.dialogFormVisible = true
     },
-    async getRoles() {
-      const res = await this.$http.get(`roles`);
-      this.roles = res.data.data;
-      console.log(this.roles);
+    async getRoles () {
+      const res = await this.$http.get(`roles`)
+      this.roles = res.data.data
+      console.log(this.roles)
     }
   }
-};
+}
 </script>
 <style>
 .box {
@@ -176,5 +175,3 @@ level2 {
   margin-bottom: 10px;
 }
 </style>
-
-

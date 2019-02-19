@@ -51,25 +51,25 @@ router.beforeEach((to, from, next) => {
   // console.log("路由守卫执行-----");
   // console.log(to, from);
   // 如果要去的是登录 -> 继续登录
-  if (to.name === "login") {
+  if (to.name === 'login') {
     next()
   } else {
     // 如果要去的不是登录  ->
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token')
     // if !token ->渲染login
     if (!token) {
       // 提示
       // this.$message.warning("请先登录");
-      Message.warning("请先登录");
+      Message.warning('请先登录')
       router.push({
         name: 'login'
       })
-      return;
+      return
     }
     //  if token 渲染home
     next()
   }
-  //next方法 : 让路由配置继续生效
+  // next方法 : 让路由配置继续生效
   // next();
 })
-export default router;
+export default router
