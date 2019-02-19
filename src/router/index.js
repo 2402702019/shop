@@ -5,6 +5,8 @@ import Home from '@/components/home.vue'
 import Users from '@/components/users.vue'
 import Rights from '@/components/rights.vue'
 import Roles from '@/components/roles.vue'
+import Goodslist from '@/components/goodslist.vue'
+import Goodsadd from '@/components/goodsadd.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -26,17 +28,28 @@ const router = new Router({
       name: 'roles',
       path: '/roles',
       component: Roles
+    },
+    {
+      name: 'goods',
+      path: '/goods',
+      component: Goodslist
+    },
+    {
+      name: 'goodsadd',
+      path: '/goodsadd',
+      component: Goodsadd
     }]
   }, {
     name: 'login',
     path: '/login',
     component: Login
-  }]
+  }
+  ]
 })
 // 路由导航守卫
 router.beforeEach((to, from, next) => {
-  console.log("路由守卫执行-----");
-  console.log(to, from);
+  // console.log("路由守卫执行-----");
+  // console.log(to, from);
   // 如果要去的是登录 -> 继续登录
   if (to.name === "login") {
     next()
