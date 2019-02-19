@@ -113,11 +113,43 @@ export default {
     this.getGoodsCate();
   },
   methods: {
-    async addGoods() {
+        async addGoods() {
+      // goods_cat	以为','分割的分类列表[1,3,6]	不能为空
       this.form.goods_cat = this.selectedOptions.join(",");
+
+      // pics	上传的图片临时路径（对象）{pic:?临时路径}	可以为空
       // this.pics
+
+      // attrs	商品的参数（数组）	可以为空 [{attr_id:?,attr_value:?}]来源于arrDy和arrStatic
+
+      // 处理动态
+      // 1. 遍历 forEach for forin map filter findIndex
+      // 2. return 不是条件 "abc"
+      // 3. 返回数组
+
+      const arr1 = this.arrDy.map(item => {
+        return { attr_id: item.attr_id, attr_value: item.attr_vals };
+      });
+      const arr2 = this.arrStatic.map(item => {
+        return { attr_id: item.attr_id, attr_value: item.attr_vals };
+      });
+      this.form.attrs = [...arr1, ...arr2];
+      // console.log(this.form);
+      
+      // 发送请求
       const res = await this.$http.post(`goods`, this.form);
       console.log(res);
+      const {
+        meta: { msg, status }
+      } = res.data;
+      if (status === 201) {
+        // 列表
+        this.$router.push({
+          name: "goods"
+        });
+      } else {
+        this.$message.error(msg);
+      }
     },
     handlePreview(file, fileList) {
       //   console.log("remove-----");
