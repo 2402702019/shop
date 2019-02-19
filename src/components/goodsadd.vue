@@ -13,7 +13,7 @@
         </el-steps>
         <!-- 标签页tabs -->
         <el-form class="form" label-position="top" label-width="80px" :model="form">
-            <el-tabs v-model="active" tab-position="left">
+            <el-tabs v-model="active" tab-position="left" @tab-click="changeTab()">
                 <el-tab-pane label="基本信息" name="1">
                     <el-form-item label="商品名称">
                         <el-input v-model="form.goods_name"></el-input>
@@ -32,7 +32,14 @@
                         <el-cascader clearable expand-trigger="hover" :options="options" v-model="selectedOptions" @change="handleChange" :props="defaultProp"></el-cascader>
                     </el-form-item>
                 </el-tab-pane>
-                <el-tab-pane label="商品参数" name="2">商品参数</el-tab-pane>
+                <el-tab-pane label="商品参数" name="2">
+                    <el-form-item :label="item1.attr_name" v-for="(item1,i) in arrDy" :key="item1.attr_id">
+                        <!-- {{ checkList}} -->
+                        <el-checkbox-group v-model="item1.attr_vals">
+                            <el-checkbox border :label="item2" v-for="(item2,i) in item1.attr_vals" :key="i"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-tab-pane>
                 <el-tab-pane label="商品属性" name="3">商品属性</el-tab-pane>
                 <el-tab-pane label="商品图片" name="4">商品图片</el-tab-pane>
                 <el-tab-pane label="商品内容" name="5">商品内容</el-tab-pane>
@@ -60,28 +67,92 @@ export default {
         goods_weight: "",
         goods_introduce: "",
         pics: [],
-        attrs: []
+        attrs: [],
+        // 获取动态数据
       },
       options: [],
-      selectedOptions: [1,3,6],
+      selectedOptions: [1, 3, 6],
       defaultProp: {
         label: "cat_name",
-        value: "cat_id",
-        children: "children"
-      }
+        value: "cat_id"
+        // children: "children"
+      },
+    //   checkList:[],
+    // 动态参数的数组
+      arrDy: [],
+       //静态参数的数组
+      arrStatic: [],
     };
   },
   created() {
     this.getGoodsCate();
   },
   methods: {
-    //   获取三级分类的数据
+    //   点击任何tab触发
+    async changeTab() {
+      // 如果点击第二个
+      // 如果分类是三级
+      if (this.active === "2" || this.active === "3") {
+        if (this.selectedOptions.length !== 3) {
+          // 提示
+          this.$message.error("请先选择三级分类!");
+          // 清空
+          if (this.active === "2") {
+            this.arrDy = [];
+          } else {
+            this.arrStatic = [];
+          }
+          return;
+        }
+
+        if (this.active === "2") {
+          // 获取动态数据
+          const res = await this.$http.get(
+            `categories/${this.selectedOptions[2]}/attributes?sel=many`
+          );
+        //   console.log(res);
+          const { meta: { msg, status }, data } = res.data;
+          if (status === 200) {
+            this.arrDy = data;
+            console.log("动态数据----");
+
+            // 处理this.arrDy中的每个元素的attr_vals)
+            // split ->字符串变数组
+            // trim() ->指的是空字符串
+            this.arrDy.forEach(item => {
+              item.attr_vals =
+                item.attr_vals.trim().length === 0
+                  ? []
+                  : item.attr_vals.trim().split(",");
+            });
+            console.log(this.arrDy);
+          }
+        }
+
+        if (this.active === "3") {
+          // 获取静态数据
+          const res = await this.$http.get(
+            `categories/${this.selectedOptions[2]}/attributes?sel=only`
+          );
+          // console.log(res);
+          const { meta: { msg, status }, data } = res.data;
+          if (status === 200) {
+            this.arrStatic = data;
+            // console.log("静态数据----");
+            console.log(this.arrStatic);
+          }
+        }
+      }
+    },
+    // 获取三级分类的数据
     async getGoodsCate() {
+      // type的值[1,2,3]
       const res = await this.$http.get(`categories?type=3`);
       const { meta: { msg, status }, data } = res.data;
+
       if (status === 200) {
         this.options = data;
-        console.log(this.options);
+        // console.log(this.options);
       }
     },
     handleChange() {}
