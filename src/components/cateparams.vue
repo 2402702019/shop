@@ -57,31 +57,31 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     return {
-      active: "1",
+      active: '1',
       form: {},
       options: [],
       selectedOptions: [],
       defaultProp: {
-        label: "cat_name",
-        value: "cat_id"
+        label: 'cat_name',
+        value: 'cat_id'
         // children: "children"
       },
       arrDy: [],
       arrStatic: [],
       // 动态tag编辑用的数据
       inputVisible: false,
-      inputValue: ""
-    };
+      inputValue: ''
+    }
   },
-  created() {
-    this.getGoodsCate();
+  created () {
+    this.getGoodsCate()
   },
   methods: {
     // 删除attr_Vals中的值
-    async handleClose(item, attr) {
-      item.attr_vals.splice(item.attr_vals.indexOf(attr), 1);
+    async handleClose (item, attr) {
+      item.attr_vals.splice(item.attr_vals.indexOf(attr), 1)
       //   {
       //       attr_name:""
       //       attr_sel:""
@@ -91,110 +91,110 @@ export default {
         `categories/${this.selectedOptions[2]}/attributes/${item.attr_id}`,
         {
           attr_name: item.attr_name,
-          attr_sel: "many",
-        //   .join ->把数组变成字符串
-          attr_vals: item.attr_vals.join(",")
+          attr_sel: 'many',
+          //   .join ->把数组变成字符串
+          attr_vals: item.attr_vals.join(',')
         }
-      );
-      console.log(res);
+      )
+      console.log(res)
     },
 
-    showInput() {
-      this.inputVisible = true;
+    showInput () {
+      this.inputVisible = true
       this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
     },
 
     // 添加attr_vals的值
-    async handleInputConfirm(item) {
-      let inputValue = this.inputValue;
+    async handleInputConfirm (item) {
+      let inputValue = this.inputValue
       if (inputValue) {
-        item.attr_vals.push(inputValue);
+        item.attr_vals.push(inputValue)
 
         const res = await this.$http.put(
           `categories/${this.selectedOptions[2]}/attributes/${item.attr_id}`,
           {
             attr_name: item.attr_name,
-            attr_sel: "many",
-            attr_vals: item.attr_vals.join(",")
+            attr_sel: 'many',
+            attr_vals: item.attr_vals.join(',')
           }
-        );
+        )
       }
-      this.inputVisible = false;
-      this.inputValue = "";
+      this.inputVisible = false
+      this.inputValue = ''
     },
 
     // 级联选择器选中时
-    handleChange() {
-      this.getDyOrStatic();
+    handleChange () {
+      this.getDyOrStatic()
     },
 
-    changeTab() {
-      this.getDyOrStatic();
+    changeTab () {
+      this.getDyOrStatic()
     },
     // 获取动态/静态数据
-    async getDyOrStatic() {
+    async getDyOrStatic () {
       // console.log("级联label改变----");
       if (this.selectedOptions.length !== 3) {
-        this.$message.warning("请先选三级分类!");
-        if (this.active === "1") {
-          this.arrDy = [];
+        this.$message.warning('请先选择三级分类!')
+        if (this.active === '1') {
+          this.arrDy = []
         }
-        if (this.active === "2") {
-          this.arrStatic = [];
+        if (this.active === '2') {
+          this.arrStatic = []
         }
-        return;
+        return
       }
 
-      if (this.active === "1") {
+      if (this.active === '1') {
         // 获取动态数据
         const res = await this.$http.get(
           `categories/${this.selectedOptions[2]}/attributes?sel=many`
-        );
+        )
         // console.log(res);
-        const { meta: { msg, status }, data } = res.data;
+        const { meta: { msg, status }, data } = res.data
         if (status === 200) {
-          this.arrDy = data;
-          console.log("动态数据----");
+          this.arrDy = data
+          console.log('动态数据----')
 
           this.arrDy.forEach(item => {
             item.attr_vals =
               item.attr_vals.trim().length === 0
                 ? []
-                : item.attr_vals.trim().split(",");
-          });
-          console.log(this.arrDy);
+                : item.attr_vals.trim().split(',')
+          })
+          console.log(this.arrDy)
         }
       }
-      if (this.active === "2") {
+      if (this.active === '2') {
         // 获取静态数据
         const res = await this.$http.get(
           `categories/${this.selectedOptions[2]}/attributes?sel=only`
-        );
+        )
         // console.log(res);
-        const { meta: { msg, status }, data } = res.data;
+        const { meta: { msg, status }, data } = res.data
         if (status === 200) {
-          this.arrStatic = data;
+          this.arrStatic = data
           // console.log("静态数据----");
-          console.log(this.arrStatic);
+          console.log(this.arrStatic)
         }
       }
     },
 
     // 获取三级分类的数据
-    async getGoodsCate() {
+    async getGoodsCate () {
       // type的值[1,2,3]
-      const res = await this.$http.get(`categories?type=3`);
-      const { meta: { msg, status }, data } = res.data;
+      const res = await this.$http.get(`categories?type=3`)
+      const { meta: { msg, status }, data } = res.data
 
       if (status === 200) {
-        this.options = data;
-        console.log(this.options);
+        this.options = data
+        console.log(this.options)
       }
     }
   }
-};
+}
 </script>
 
 <style>
@@ -220,5 +220,3 @@ export default {
   vertical-align: bottom;
 }
 </style>
-
-
