@@ -1,0 +1,187 @@
+<template>
+    <el-card class="box">
+        <cus-bread level1="商品管理" level2="分类参数"></cus-bread>
+        <el-alert class="alert" title="注意:只允许为第三级分类设置参数" type="warning" show-icon></el-alert>
+
+        <el-form class="form" label-position="left" label-width="140px" :model="form">
+            <el-form-item label="请选择商品分类">
+                {{selectedOptions}}
+                <el-cascader clearable expand-trigger="hover" :options="options" v-model="selectedOptions" @change="handleChange" :props="defaultProp"></el-cascader>
+            </el-form-item>
+        </el-form>
+
+        <el-tabs type="border-card" v-model="active">
+            <el-tab-pane name="1" label="动态参数">动态参数</el-tab-pane>
+            <el-tab-pane name="2" label="静态参数">静态参数</el-tab-pane>
+        </el-tabs>
+    </el-card>
+
+</template>
+<script>
+export default {
+  data() {
+    return {
+      active: "1",
+      form: {},
+      options: [],
+      selectedOptions: [],
+      defaultProp: {
+        label: "cat_name",
+        value: "cat_id"
+        // children: "children"
+      },
+      arrDy: [],
+      arrStatic: [],
+      // 动态tag编辑用的数据
+      inputVisible: false,
+      inputValue: ""
+    };
+  },
+  created() {
+    this.getGoodsCate();
+  },
+  methods: {
+    // 删除attr_Vals中的值
+    async handleClose(item, attr) {
+      item.attr_vals.splice(item.attr_vals.indexOf(attr), 1);
+
+      // categories/:id/attributes/:attrId
+      // put请求->1. 找到要修改的数据 2. 新数据->请求体
+      // {
+      //   attr_name:"",
+      //   attr_sel:"",
+      //   attr_vals:""
+      // }
+      const res = await this.$http.put(
+        // 参数 attr_sel 类型必须为 only 或 many"  -> 接口文档更新了!->接口文档->不对X
+        `categories/${this.selectedOptions[2]}/attributes/${item.attr_id}`,
+        {
+          attr_name: item.attr_name,
+          attr_sel: "many",
+          attr_vals: item.attr_vals.join(",")
+        }
+      );
+      // url没写错
+      // attr_sel 没有
+      // net:: -> 服务器没开
+
+      console.log(res);
+    },
+
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+
+    // 添加attr_vals的值
+    async handleInputConfirm(item) {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        item.attr_vals.push(inputValue);
+
+        const res = await this.$http.put(
+          `categories/${this.selectedOptions[2]}/attributes/${item.attr_id}`,
+          {
+            attr_name: item.attr_name,
+            attr_sel: "many",
+            attr_vals: item.attr_vals.join(",")
+          }
+        );
+      }
+      this.inputVisible = false;
+      this.inputValue = "";
+    },
+
+    // 级联选择器选中时
+    handleChange() {
+      this.getDyOrStatic();
+    },
+
+    changeTab() {
+      this.getDyOrStatic();
+    },
+    // 获取动态/静态数据
+    async getDyOrStatic() {
+      // console.log("级联label改变----");
+      if (this.selectedOptions.length !== 3) {
+        this.$message.warning("请先选三级分类!");
+        if (this.active === "1") {
+          this.arrDy = [];
+        }
+        if (this.active === "2") {
+          this.arrStatic = [];
+        }
+        return;
+      }
+
+      if (this.active === "1") {
+        // 获取动态数据
+        const res = await this.$http.get(
+          `categories/${this.selectedOptions[2]}/attributes?sel=many`
+        );
+        // console.log(res);
+        const {
+          meta: { msg, status },
+          data
+        } = res.data;
+        if (status === 200) {
+          this.arrDy = data;
+          console.log("动态数据----");
+
+          this.arrDy.forEach(item => {
+            item.attr_vals =
+              item.attr_vals.trim().length === 0
+                ? []
+                : item.attr_vals.trim().split(",");
+          });
+          console.log(this.arrDy);
+        }
+      }
+      if (this.active === "2") {
+        // 获取静态数据
+        const res = await this.$http.get(
+          `categories/${this.selectedOptions[2]}/attributes?sel=only`
+        );
+        // console.log(res);
+        const {
+          meta: { msg, status },
+          data
+        } = res.data;
+        if (status === 200) {
+          this.arrStatic = data;
+          // console.log("静态数据----");
+          console.log(this.arrStatic);
+        }
+      }
+    },
+
+    // 获取三级分类的数据
+    async getGoodsCate() {
+      // type的值[1,2,3]
+      const res = await this.$http.get(`categories?type=3`);
+      const {
+        meta: { msg, status },
+        data
+      } = res.data;
+
+      if (status === 200) {
+        this.options = data;
+        console.log(this.options);
+      }
+    }
+  }
+};
+</script>
+
+<style>
+.box {
+  height: 100%;
+}
+.alert {
+  margin-top: 20px;
+}
+</style>
+
+

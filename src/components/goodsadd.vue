@@ -1,68 +1,68 @@
 <template>
-    <el-card class="box">
-        <cus-Bread level1='商品管理' level2='商品列表'></cus-Bread>
-        <el-alert class="alert" title="消息提示的文案" type="info" center show-icon>
-        </el-alert>
-        <!-- active*1 ->*1这是字符串变数值的方法  -->
-        <el-steps :active="active*1" align-center>
-            <el-step title="基本信息"></el-step>
-            <el-step title="商品参数"></el-step>
-            <el-step title="商品属性"></el-step>
-            <el-step title="商品图片"></el-step>
-            <el-step title="商品内容"></el-step>
-        </el-steps>
-        <!-- 标签页tabs -->
-        <el-form class="form" label-position="top" label-width="80px" :model="form">
-            <el-tabs v-model="active" tab-position="left" @tab-click="changeTab()">
-                <el-tab-pane label="基本信息" name="1">
-                    <el-form-item label="商品名称">
-                        <el-input v-model="form.goods_name"></el-input>
-                    </el-form-item>
-                    <el-form-item label="商品价格">
-                        <el-input v-model="form.goods_price"></el-input>
-                    </el-form-item>
-                    <el-form-item label="商品重量">
-                        <el-input v-model="form.goods_weight"></el-input>
-                    </el-form-item>
-                    <el-form-item label="商品数量">
-                        <el-input v-model="form.goods_number"></el-input>
-                    </el-form-item>
-                    <el-form-item label="商品分类">
-                        {{selectedOptions}}
-                        <el-cascader clearable expand-trigger="hover" :options="options" v-model="selectedOptions" @change="handleChange" :props="defaultProp"></el-cascader>
-                    </el-form-item>
-                </el-tab-pane>
-                <el-tab-pane label="商品参数" name="2">
-                    <el-form-item :label="item1.attr_name" v-for="(item1) in arrDy" :key="item1.attr_id">
-                        <!-- {{ checkList}} -->
-                        <el-checkbox-group v-model="item1.attr_vals">
-                            <el-checkbox border :label="item2" v-for="(item2,i) in item1.attr_vals" :key="i"></el-checkbox>
-                        </el-checkbox-group>
-                    </el-form-item>
-                </el-tab-pane>
-                <el-tab-pane label="商品属性" name="3">
-                    <el-form-item :label="item.attr_name" v-for="(item) in arrStatic" :key="item.attr_id">
-                        <el-input v-model="item.attr_vals"></el-input>
-                    </el-form-item>
-                </el-tab-pane>
-                <el-tab-pane label="商品图片" name="4">
-                    <el-form-item label="添加图片">
-                        <!-- header可以设置请求头 -->
-                        <el-upload :headers="headers" action="http://localhost:8888/api/private/v1/upload" :on-remove="handlePreview" :on-success="handleSuccess" list-type="picture">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload>
-                    </el-form-item>
-                </el-tab-pane>
-                <el-tab-pane label="商品内容" name="5">
-                    <el-form-item>
-                        <el-button @click="addGoods()">添加商品</el-button>
+  <el-card class="box">
+    <cus-Bread level1='商品管理' level2='商品列表'></cus-Bread>
+    <el-alert class="alert" title="消息提示的文案" type="info" center show-icon>
+    </el-alert>
+    <!-- active*1 ->*1这是字符串变数值的方法  -->
+    <el-steps :active="active*1" align-center>
+      <el-step title="基本信息"></el-step>
+      <el-step title="商品参数"></el-step>
+      <el-step title="商品属性"></el-step>
+      <el-step title="商品图片"></el-step>
+      <el-step title="商品内容"></el-step>
+    </el-steps>
+    <!-- 标签页tabs -->
+    <el-form class="form" label-position="top" label-width="80px" :model="form">
+      <el-tabs v-model="active" tab-position="left" @tab-click="changeTab()">
+        <el-tab-pane label="基本信息" name="1">
+          <el-form-item label="商品名称">
+            <el-input v-model="form.goods_name"></el-input>
+          </el-form-item>
+          <el-form-item label="商品价格">
+            <el-input v-model="form.goods_price"></el-input>
+          </el-form-item>
+          <el-form-item label="商品重量">
+            <el-input v-model="form.goods_weight"></el-input>
+          </el-form-item>
+          <el-form-item label="商品数量">
+            <el-input v-model="form.goods_number"></el-input>
+          </el-form-item>
+          <el-form-item label="商品分类">
+            {{selectedOptions}}
+            <el-cascader clearable expand-trigger="hover" :options="options" v-model="selectedOptions" @change="handleChange" :props="defaultProp"></el-cascader>
+          </el-form-item>
+        </el-tab-pane>
+        <el-tab-pane label="商品参数" name="2">
+          <el-form-item :label="item1.attr_name" v-for="(item1) in arrDy" :key="item1.attr_id">
+            <!-- {{ checkList}} -->
+            <el-checkbox-group v-model="item1.attr_vals">
+              <el-checkbox border :label="item2" v-for="(item2,i) in item1.attr_vals" :key="i"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-tab-pane>
+        <el-tab-pane label="商品属性" name="3">
+          <el-form-item :label="item.attr_name" v-for="(item) in arrStatic" :key="item.attr_id">
+            <el-input v-model="item.attr_vals"></el-input>
+          </el-form-item>
+        </el-tab-pane>
+        <el-tab-pane label="商品图片" name="4">
+          <el-form-item label="添加图片">
+            <!-- header可以设置请求头 -->
+            <el-upload :headers="headers" action="http://localhost:8888/api/private/v1/upload" :on-remove="handleRemove" :on-success="handleSuccess" list-type="picture">
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+          </el-form-item>
+        </el-tab-pane>
+        <el-tab-pane label="商品内容" name="5">
+          <el-form-item>
+            <el-button @click="addGoods()">添加商品</el-button>
 
-                        <quill-editor v-model="form.goods_introduce" class="quill"></quill-editor>
-                    </el-form-item>
-                </el-tab-pane>
-            </el-tabs>
-        </el-form>
-    </el-card>
+            <quill-editor v-model="form.goods_introduce" class="quill"></quill-editor>
+          </el-form-item>
+        </el-tab-pane>
+      </el-tabs>
+    </el-form>
+  </el-card>
 </template>
 <script>
 import "quill/dist/quill.core.css";
@@ -71,6 +71,9 @@ import "quill/dist/quill.bubble.css";
 
 import { quillEditor } from "vue-quill-editor";
 export default {
+  components: {
+    quillEditor
+  },
   data() {
     return {
       active: "1",
@@ -113,7 +116,7 @@ export default {
     this.getGoodsCate();
   },
   methods: {
-        async addGoods() {
+    async addGoods() {
       // goods_cat	以为','分割的分类列表[1,3,6]	不能为空
       this.form.goods_cat = this.selectedOptions.join(",");
 
@@ -135,13 +138,11 @@ export default {
       });
       this.form.attrs = [...arr1, ...arr2];
       // console.log(this.form);
-      
+
       // 发送请求
       const res = await this.$http.post(`goods`, this.form);
       console.log(res);
-      const {
-        meta: { msg, status }
-      } = res.data;
+      const { meta: { msg, status } } = res.data;
       if (status === 201) {
         // 列表
         this.$router.push({
@@ -151,7 +152,7 @@ export default {
         this.$message.error(msg);
       }
     },
-    handlePreview(file, fileList) {
+    handleRemove(file, fileList) {
       //   console.log("remove-----");
       //   console.log(file);
       // 图片上传的临时路径->在api-server/tmp_uploads临时路径
@@ -241,9 +242,6 @@ export default {
     },
     handleChange() {}
     // handlePreview(){}
-  },
-  components: {
-    quillEditor
   }
 };
 </script>
