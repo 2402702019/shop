@@ -83,13 +83,6 @@ export default {
     async handleClose(item, attr) {
       item.attr_vals.splice(item.attr_vals.indexOf(attr), 1);
 
-      // categories/:id/attributes/:attrId
-      // put请求->1. 找到要修改的数据 2. 新数据->请求体
-      // {
-      //   attr_name:"",
-      //   attr_sel:"",
-      //   attr_vals:""
-      // }
       const res = await this.$http.put(
         // 参数 attr_sel 类型必须为 only 或 many"  -> 接口文档更新了!->接口文档->不对X
         `categories/${this.selectedOptions[2]}/attributes/${item.attr_id}`,
