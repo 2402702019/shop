@@ -130,11 +130,11 @@ export default {
 
       const res = await this.$http.post(`categories`, this.form);
       console.log(res);
-      const { meta: { msg, status } } = res.data;
-      if (status === 201) {
-        this.dialogFormVisibleAdd = false;
-        this.getGoodsCate();
-      }
+const {meta:{msg,status},data}=res.data
+if(status==201) {
+  this.dialogFormVisibleAdd = false
+
+}
     },
 
     // 添加分类- 显示对话框
