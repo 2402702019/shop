@@ -82,13 +82,17 @@ export default {
     // 删除attr_Vals中的值
     async handleClose(item, attr) {
       item.attr_vals.splice(item.attr_vals.indexOf(attr), 1);
-
+      //   {
+      //       attr_name:""
+      //       attr_sel:""
+      //       attrvals:""_
+      //   }
       const res = await this.$http.put(
-        // 参数 attr_sel 类型必须为 only 或 many"  -> 接口文档更新了!->接口文档->不对X
         `categories/${this.selectedOptions[2]}/attributes/${item.attr_id}`,
         {
           attr_name: item.attr_name,
           attr_sel: "many",
+        //   .join ->把数组变成字符串
           attr_vals: item.attr_vals.join(",")
         }
       );
