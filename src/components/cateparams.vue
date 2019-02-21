@@ -10,12 +10,50 @@
             </el-form-item>
         </el-form>
 
-        <el-tabs type="border-card" v-model="active">
-            <el-tab-pane name="1" label="动态参数">动态参数</el-tab-pane>
-            <el-tab-pane name="2" label="静态参数">静态参数</el-tab-pane>
+        <el-tabs type="border-card" v-model="active" @tab-click="changeTab()">
+            <el-tab-pane name="1" label="动态参数">
+                <el-button disabled>设置动态参数</el-button>
+                <el-table height="450px" border stripe :data="arrDy" style="width: 100%">
+                    <el-table-column type="expand" width="140">
+                        <template slot-scope="scope">
+                            <!-- scope.row.attr_vals -->
+                            <el-tag :key="i" v-for="(attr,i) in scope.row.attr_vals" closable :disable-transitions="false" @close="handleClose(scope.row,attr)">{{attr}}</el-tag>
+                            <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm(scope.row)" @blur="handleInputConfirm(scope.row)"></el-input>
+                            <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column type="index" label="#" width="120"></el-table-column>
+
+                    <el-table-column prop="attr_name" label="属性名称" width="240"></el-table-column>
+
+                    <el-table-column label="操作" width="200">
+                        <template slot-scope="scope">
+                            <el-button plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+                            <el-button plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tab-pane>
+            <el-tab-pane name="2" label="静态参数">
+                <el-button disabled>设置静态参数</el-button>
+
+                <el-table height="350px" border stripe :data="arrStatic" style="width: 100%">
+                    <el-table-column type="index" label="#" width="120"></el-table-column>
+
+                    <el-table-column prop="attr_name" label="属性名称" width="240"></el-table-column>
+                    <el-table-column prop="attr_vals" label="属性值" width="240"></el-table-column>
+
+                    <el-table-column label="操作" width="200">
+                        <template slot-scope="scope">
+                            <el-button plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+                            <el-button plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tab-pane>
         </el-tabs>
     </el-card>
-
 </template>
 <script>
 export default {
@@ -61,10 +99,6 @@ export default {
           attr_vals: item.attr_vals.join(",")
         }
       );
-      // url没写错
-      // attr_sel 没有
-      // net:: -> 服务器没开
-
       console.log(res);
     },
 
@@ -122,10 +156,7 @@ export default {
           `categories/${this.selectedOptions[2]}/attributes?sel=many`
         );
         // console.log(res);
-        const {
-          meta: { msg, status },
-          data
-        } = res.data;
+        const { meta: { msg, status }, data } = res.data;
         if (status === 200) {
           this.arrDy = data;
           console.log("动态数据----");
@@ -145,10 +176,7 @@ export default {
           `categories/${this.selectedOptions[2]}/attributes?sel=only`
         );
         // console.log(res);
-        const {
-          meta: { msg, status },
-          data
-        } = res.data;
+        const { meta: { msg, status }, data } = res.data;
         if (status === 200) {
           this.arrStatic = data;
           // console.log("静态数据----");
@@ -161,10 +189,7 @@ export default {
     async getGoodsCate() {
       // type的值[1,2,3]
       const res = await this.$http.get(`categories?type=3`);
-      const {
-        meta: { msg, status },
-        data
-      } = res.data;
+      const { meta: { msg, status }, data } = res.data;
 
       if (status === 200) {
         this.options = data;
