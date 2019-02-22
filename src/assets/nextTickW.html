@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>Document</title>
+  <!-- 引入vue.js -->
+  <script src='../../node_modules/vue/dist/vue.js'></script>
+
+</head>
+
+<body>
+  <!-- 设置Vue所管理的视图-->
+  <div id='app'>
+    <!-- 场景 -->
+    <p ref="txt">{{count}}</p>
+    <button @click="fn()">按钮</button>
+  </div>
+  <script>
+    // 实例化Vue对象
+    const vm = new Vue({
+      // 指定Vue管理的视图
+      el: '#app',
+      data: {
+        count: 1
+      },
+      methods: {
+        fn() {
+          // 修改数据->data中的数据变化->beforeUpdate+更新DOM+updated->视图变化
+          this.count++;
+
+          //需求: js代码中通过DOM操作的方式,获取页面p标签的最新内容(最新值)
+          // 获取页面中已经存在的DOM元素.内容
+          // setTimeout(() => {
+
+          //   console.log(this.$refs.txt.innerText);
+          // }, 1000);
+
+          // vue提供了自己的实例方法$nextTick
+          this.$nextTick(() => {
+            // 处理dom
+
+            console.log(this.$refs.txt.innerText);
+
+          })
+
+
+
+        }
+      }
+    });
+
+  </script>
+</body>
+
+</html>
