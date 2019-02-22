@@ -13,7 +13,7 @@
         <el-tabs type="border-card" v-model="active" @tab-click="changeTab()">
             <el-tab-pane name="1" label="动态参数">
                 <el-button disabled>设置动态参数</el-button>
-                <el-table height="450px" border stripe :data="arrDy" style="width: 100%">
+                <el-table @expand-change="fn" height="450px" border stripe :data="arrDy" style="width: 100%">
                     <el-table-column type="expand" width="140">
                         <template slot-scope="scope">
                             <!-- scope.row.attr_vals -->
@@ -79,6 +79,16 @@ export default {
     this.getGoodsCate()
   },
   methods: {
+     fn(row, expandedRows) {
+      // console.log(row);
+      // expandedRows所有展开行的数据数组
+      // console.log(expandedRows);
+      // [a] [a,b]->[b]
+      if (expandedRows.length > 1) {
+        expandedRows.shift();
+        // console.log(expandedRows);
+      }
+    },
     // 删除attr_Vals中的值
     async handleClose (item, attr) {
       item.attr_vals.splice(item.attr_vals.indexOf(attr), 1)

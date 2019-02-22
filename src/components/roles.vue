@@ -4,24 +4,24 @@
         <cus-bread level1="权限管理" level2="角色列表"></cus-bread>
         <el-button class="btn" type="primary">添加角色</el-button>
         <!-- 表格 -->
-        <el-table :data="roles" style="width: 100%">
+        <el-table  @expand-change="fn" :data="roles" style="width: 100%">
             <el-table-column type="expand">
                 <template slot-scope="scope">
                     <!-- 行列 -->
                     <!--  el-row>(el-col>el-tag+el-col>el-row>(el-col>el-tag+el-col>el-tag))-->
-                    <el-row class="level1" v-for="(item1,i) in scope.row.children" :key="item1.id">
+                    <el-row class="level1" v-for="(item1) in scope.row.children" :key="item1.id">
                         <el-col :span="4">
                             <el-tag @close="deleRights(scope.row,item1)" closable type="danger">{{item1.authName}}</el-tag>
                             <i class="el-icon-arrow-right"></i>
                         </el-col>
                         <el-col :span="20">
-                            <el-row class="level2" v-for="(item2,i) in item1.children" :key="item2.id">
+                            <el-row class="level2" v-for="(item2) in item1.children" :key="item2.id">
                                 <el-col :span="4">
                                     <el-tag @close="deleRights(scope.row,item2)" closable type="info">{{item2.authName}}</el-tag>
                                     <i class="el-icon-arrow-right"></i>
                                 </el-col>
                                 <el-col :span="20">
-                                    <el-tag @close="deleRights(scope.row,item3)" closable v-for="(item3,i) in item2.children" :key="item3.id" type="warning">{{item3.authName}}</el-tag>
+                                    <el-tag @close="deleRights(scope.row,item3)" closable v-for="(item3) in item2.children" :key="item3.id" type="warning">{{item3.authName}}</el-tag>
                                 </el-col>
                             </el-row>
                         </el-col>
@@ -85,6 +85,18 @@ export default {
     this.getRoles()
   },
   methods: {
+    //  展开或关闭时触发
+    fn(row, expandedRows) {
+      // console.log(row);
+      // expandedRows所有展开行的数据数组
+      // console.log(expandedRows);
+      // [a] [a,b]->[b]
+      if (expandedRows.length > 1) {
+        // .shift是移除前一个元素
+        expandedRows.shift();
+        console.log(expandedRows);
+      }
+    },
     //   分配权限
     async setRights () {
       const arr1 = this.$refs.treeDom.getCheckedKeys()
